@@ -151,12 +151,90 @@ def solve_with_mapping(list_of_men, scale):
 ### ### --- ### --- ### --- ### --- ### --- ### --- ### --- ### --- ### --- ### --- ### --- ### ---
 
 
-def test_3_with_2_weighings():
-    pass
+def sublist(the_list, indices):
+    return [the_list[i-1] for i in indices]
 
 
-def solve_with_logic():
-    pass
+def compare_sublists(scale, list_, left_i, right_i):
+    left_side = sublist(list_, left_i)
+    right_side = sublist(list_, right_i)
+    result = scale.compare(left_side, right_side)
+    # print(left_side,  "vs", fascists, '->', result)
+    return result
+
+
+def pick(list_, natural_index):
+    return list_[natural_index-1]
+
+
+def solve_with_logic(list_of_men, scale):
+    result = compare_sublists(scale, list_of_men, [1, 2, 3, 4], [5, 6, 7, 8])
+    if result == ScaleResult.Equal:
+        result = compare_sublists(scale, list_of_men, [9], [10])
+        if result == ScaleResult.Equal:
+            result = compare_sublists(scale, list_of_men, [9], [11])
+            if result == ScaleResult.Equal:
+                return pick(list_of_men, 12)
+            else:
+                return pick(list_of_men, 11)
+        else:
+            result = compare_sublists(scale, list_of_men, [9], [11])
+            if result == ScaleResult.Equal:
+                return pick(list_of_men, 10)
+            else:
+                return pick(list_of_men, 9)
+
+    elif result == ScaleResult.LeftHeavier:
+        result = compare_sublists(scale, list_of_men, [1, 2, 3, 5], [4, 10, 11, 12])
+        if result == ScaleResult.LeftHeavier:
+            result = compare_sublists(scale, list_of_men, [1], [2])
+            if result == ScaleResult.LeftHeavier:
+                return pick(list_of_men, 1)
+            elif result == ScaleResult.RightHeavier:
+                return pick(list_of_men, 2)
+            else:
+                return pick(list_of_men, 3)
+        elif result == ScaleResult.RightHeavier:
+            result = compare_sublists(scale, list_of_men, [4], [12])
+            if result == ScaleResult.Equal:
+                return pick(list_of_men, 5)
+            else:
+                return pick(list_of_men, 4)
+        else:
+            result = compare_sublists(scale, list_of_men, [6], [7])
+            if result == ScaleResult.LeftHeavier:
+                return pick(list_of_men, 7)
+            elif result == ScaleResult.RightHeavier:
+                return pick(list_of_men, 6)
+            else:
+                return pick(list_of_men, 8)
+
+    elif result == ScaleResult.RightHeavier:
+        result = compare_sublists(scale, list_of_men, [5, 10, 11, 12], [4, 6, 7, 8])
+        if result == ScaleResult.RightHeavier:
+            result = compare_sublists(scale, list_of_men, [6], [7])
+            if result == ScaleResult.RightHeavier:
+                return pick(list_of_men, 7)
+            elif result == ScaleResult.LeftHeavier:
+                return pick(list_of_men, 6)
+            else:
+                return pick(list_of_men, 8)
+        elif result == ScaleResult.LeftHeavier:
+            result = compare_sublists(scale, list_of_men, [5], [12])
+            if result == ScaleResult.Equal:
+                return pick(list_of_men, 4)
+            else:
+                return pick(list_of_men, 5)
+        else:
+            result = compare_sublists(scale, list_of_men, [1], [2])
+            if result == ScaleResult.RightHeavier:
+                return pick(list_of_men, 1)
+            elif result == ScaleResult.LeftHeavier:
+                return pick(list_of_men, 2)
+            else:
+                return pick(list_of_men, 3)
+
+    raise RuntimeError("This should not happen")
 
 
 ### --- ### --- ### --- ### --- ### --- ### --- ### --- ### --- ### --- ### --- ### --- ### --- ###
@@ -164,4 +242,6 @@ def solve_with_logic():
 
 
 def solve(list_of_men, scale):
-    return solve_with_mapping(list_of_men, scale)
+    # return solve_with_mapping(list_of_men, scale)
+    # return None
+    return solve_with_logic(list_of_men, scale)

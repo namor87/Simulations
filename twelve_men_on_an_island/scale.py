@@ -1,6 +1,5 @@
 from enum import Enum
 
-from twelve_men_on_an_island.model import WeightedMan
 from twelve_men_on_an_island.model import Weight
 
 

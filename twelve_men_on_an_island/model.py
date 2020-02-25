@@ -13,3 +13,5 @@ class WeightedMan(object):
         self.id = id
         self.weight = weight
 
+    def __repr__(self):
+        return str(self.id) + ":" + str(self.weight.name)
