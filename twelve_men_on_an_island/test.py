@@ -75,7 +75,7 @@ class TestSolver(unittest.TestCase):
     def test_random(self):
         scale = Scale()
         list_o_men = simple_list()
-        list_o_men[random.randint(0, 11)].weight = Weight.Heavy
+        list_o_men[random.randint(1, 11)].weight = Weight.Heavy
         result = solver.solve(list_o_men, scale)
         self.assertIn(result.weight, [Weight.Heavy, Weight.Light])
         self.assertLessEqual(scale.get_weight_count(), 3)
@@ -86,7 +86,7 @@ class TestSolver(unittest.TestCase):
                 scale = Scale()
                 list_o_men = simple_list()
                 list_o_men[i].weight = new_weight
-                result = solver.solve(list_o_men, )
+                result = solver.solve(list_o_men, scale)
                 self.assertEqual(result.weight, new_weight)
                 self.assertEqual(result.id, i)
                 self.assertLessEqual(scale.get_weight_count(), 3)
