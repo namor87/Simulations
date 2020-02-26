@@ -1,6 +1,6 @@
 from enum import Enum
 
-from twelve_men_on_an_island.scale import ScaleResult
+from twelve_men_on_an_island.scale import ScaleResult, WeightAnomaly
 
 
 class ScaleSide(Enum):
@@ -24,7 +24,6 @@ class SolvedMan(object):
 
     def __repr__(self):
         return str(self.__man.id) + " " +\
-               str(self.__man.weight) + ' ' +\
                str(self.__weighing_scheme) + ' ' +\
                str(self.__measurements)
 
@@ -47,6 +46,15 @@ class SolvedMan(object):
                 all(map(lambda mes: mes in [WeighingResult.H, WeighingResult.X], self.__measurements))
             ]
         )
+
+    def derive_weight(self):
+        if all(map(lambda mes: mes in [WeighingResult.L, WeighingResult.X], self.__measurements)):
+            return WeightAnomaly.Light
+        elif all(map(lambda mes: mes in [WeighingResult.H, WeighingResult.X], self.__measurements)):
+            return WeightAnomaly.Heavy
+        if self.has_all_outlying_results() :
+            return WeightAnomaly.Normal
+
 
 
 ### --- ### --- ### --- ### --- ### --- ### --- ### --- ### --- ### --- ### --- ### --- ### --- ###
@@ -144,7 +152,8 @@ def solve_with_mapping(list_of_men, scale):
     perform_weighing(scale, solvable_men)
     outliers = find_men_with_consistent_measurements(solvable_men)
     assert len(outliers) == 1
-    return outliers[0].get_man()
+    the_man = outliers[0]
+    return the_man.get_man(), the_man.derive_weight()
 
 
 ### --- ### --- ### --- ### --- ### --- ### --- ### --- ### --- ### --- ### --- ### --- ### --- ###
@@ -174,7 +183,7 @@ def solve_with_logic(list_of_men, scale):
         if result == ScaleResult.Equal:
             result = compare_sublists(scale, list_of_men, [9], [11])
             if result == ScaleResult.Equal:
-                return pick(list_of_men, 12)
+                return pick(list_of_men, 12),
             else:
                 return pick(list_of_men, 11)
         else:
@@ -242,6 +251,7 @@ def solve_with_logic(list_of_men, scale):
 
 
 def solve(list_of_men, scale):
-    # return solve_with_mapping(list_of_men, scale)
-    # return None
-    return solve_with_logic(list_of_men, scale)
+    return solve_with_mapping(list_of_men, scale)
+    #
+    # solution = solve_with_logic(list_of_men, scale)
+    # return (solution.get_man(), solution.get_man().weight)
