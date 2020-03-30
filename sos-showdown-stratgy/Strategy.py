@@ -161,12 +161,7 @@ class Accounting:
             self.scores[strategy] = {against: score}
 
     def sumup(self):
-        # scorecards = list()
-        # for strategy, scores in self.scores.items():
-        #     scorecards.append(StrategyScore(strategy, scores))
-        scorecards = list(map(lambda entry : StrategyScore(entry[0], entry[1]), self.scores.items()))
-        scorecards.sort(key=lambda ss: (ss.avg_points, ss.avg_wins), reverse=True)
-        return scorecards
+        return list(map(lambda entry: StrategyScore(entry[0], entry[1]), self.scores.items()))
 
 
 # # # # #   MAIN   # # # # #
@@ -197,8 +192,8 @@ for (strategy_one, strategy_two) in itertools.combinations(strategies, 2):
 
 sorted_scores = account.sumup()
 
+sorted_scores.sort(key=lambda ss: (ss.avg_points, ss.avg_wins), reverse=True)
+
 for strategy_score in sorted_scores:
     # print(strategy_score.print_short())
     print(strategy_score.print_long())
-
-# compare_strategies( Strategy('EQUAL_TOP', 6, 6, 0), Strategy('EQUAL_BOTTOM', 8, 2, 2))
