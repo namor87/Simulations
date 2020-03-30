@@ -1,6 +1,5 @@
 import itertools
 import os
-import sys
 
 
 class Formation:
@@ -76,7 +75,6 @@ class ScoreRecord:
     def __repr__(self):
         s = (self.left_score, self.right_score, self.left_points, self.right_points, self.left_flags, self.right_flags)
         return "[%.1f-%.1f (%.1f-%.1f) %.0f%%]" % (s[2], s[3], s[4], s[5], s[0]*100)
-        # return str(list(map(lambda x: round(x, 2), s)))
 
 
 class StrategyCompare:
@@ -126,20 +124,14 @@ class StrategyScore:
         self.avg_points = self.average_of(lambda scoreboard: scoreboard.left_points)
         self.avg_flags = self.average_of(lambda scoreboard: scoreboard.left_flags)
 
-
-    @classmethod
-    def from_dict(cls, score_dict):
-        pass
-        # return StrategyScore()
-
     def average_of(self, map_selector):
         values_map = map(map_selector, self.score_dict.values())
         average = sum(values_map) / len(self.score_dict)
         return round(average, 2)
 
     def print_short(self):
-        scores_str = ' - '.join(map(lambda x: str(round(x, 2)), (self.avg_points, self.avg_flags, self.avg_wins)))
-        return str(self.strategy) + " : " + scores_str
+        scores_str = ' | '.join(map(lambda x: str(round(x, 1)), (self.avg_points, self.avg_flags, self.avg_wins)))
+        return "%30s --  %s" % (str(self.strategy), scores_str)
 
     @staticmethod
     def print_result(other_strategy, score_board):
@@ -147,7 +139,7 @@ class StrategyScore:
 
     def print_long(self):
         sep = os.linesep + '\t'
-        return self.print_short() + sep + \
+        return self.print_short().strip() + sep + \
                sep.join(map(lambda element: self.print_result(element[0], element[1]), self.score_dict.items()))
 
 
@@ -167,11 +159,6 @@ class Accounting:
 # # # # #   MAIN   # # # # #
 
 
-def compare_strategies(strategy_one, strategy_two):
-    compare = StrategyCompare(strategy_one, strategy_two)
-    return compare.evaluate()
-
-
 strategies = [
     Strategy('EQUAL_TOP', 6, 6, 0),
     Strategy('EQUAL_ALL', 4, 4, 4),
@@ -185,8 +172,7 @@ account = Accounting()
 
 
 for (strategy_one, strategy_two) in itertools.combinations(strategies, 2):
-    score = compare_strategies(strategy_one, strategy_two)
-    # print(strategy_one, strategy_two, score, sep=" - ")
+    score = StrategyCompare(strategy_one, strategy_two).evaluate()
     account.register(strategy_one, strategy_two, score)
     account.register(strategy_two, strategy_one, score.reverse())
 
